@@ -1,13 +1,17 @@
+import 'package:code/controllers/auth_controler.dart';
 import 'package:code/models/constant/app_constant.dart';
-import 'package:code/routes.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class UserLogin extends StatelessWidget {
-  const UserLogin({Key? key}) : super(key: key);
+class SignUp extends StatelessWidget {
+  SignUp({Key? key}) : super(key: key);
+
+  final TextEditingController _walletController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    Get.find<AuthControler>().genarateKey();
+
     return Scaffold(
       backgroundColor: theamColor,
       body: SafeArea(
@@ -52,7 +56,7 @@ class UserLogin extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.all(32),
                           child: Text(
-                            'Sign In',
+                            'Sign Up',
                             style:
                                 TextStyle(fontSize: 24, color: Colors.black54),
                           ),
@@ -68,20 +72,28 @@ class UserLogin extends StatelessWidget {
                           const Padding(
                             padding: EdgeInsets.only(bottom: 8),
                             child: Text(
-                              'Mobile',
+                              'Wallet Address',
                               style: TextStyle(
                                   color: Colors.black54, fontSize: 16),
                             ),
                           ),
                           TextField(
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                            // controller: _addressController,
+                            style:
+                                TextStyle(color: Colors.black54, fontSize: 16),
+                            controller: _walletController
+                              ..text =
+                                  Get.find<AuthControler>().ethAdddress.value,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              hintText: '07XXXXXXXX',
-                              prefixIcon: Icon(Icons.contact_phone),
+                              suffixIcon: TextButton(
+                                child: Text('Coppy'),
+                                onPressed: () {
+                                  Get.find<AuthControler>().setIsShowPassword();
+                                },
+                              ),
+                              prefixIcon: Icon(Icons.currency_bitcoin_rounded),
                               hintStyle: const TextStyle(
                                   color: Colors.grey,
                                   fontWeight: FontWeight.w400,
@@ -106,17 +118,64 @@ class UserLogin extends StatelessWidget {
                                   color: Colors.black54, fontSize: 16),
                             ),
                           ),
+                          Obx(() => TextField(
+                                style: const TextStyle(
+                                    color: Colors.black, fontSize: 16),
+                                // controller: _addressController,
+                                obscureText: !Get.find<AuthControler>()
+                                    .isShowPassword
+                                    .value,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  hintText: 'xxxxxxxx',
+                                  prefixIcon:
+                                      const Icon(Icons.lock_person_rounded),
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      Get.find<AuthControler>()
+                                          .setIsShowPassword();
+                                    },
+                                    icon: Get.find<AuthControler>()
+                                            .isShowPassword
+                                            .value
+                                        ? const Icon(Icons.visibility)
+                                        : const Icon(Icons.visibility_off),
+                                  ),
+                                  hintStyle: const TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 13),
+                                ),
+                              ))
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 22, right: 16, top: 22),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 8),
+                            child: Text(
+                              'Email',
+                              style: TextStyle(
+                                  color: Colors.black54, fontSize: 16),
+                            ),
+                          ),
                           TextField(
                             style: const TextStyle(
-                                color: Colors.white, fontSize: 16),
-                            // controller: _addressController,
+                                color: Colors.black, fontSize: 16),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               hintText: 'xxxxxxxx',
-                              prefixIcon: const Icon(Icons.lock_person_rounded),
-                              suffixIcon: const Icon(Icons.visibility),
+                              prefixIcon: const Icon(Icons.email_rounded),
                               hintStyle: const TextStyle(
                                   color: Colors.grey,
                                   fontWeight: FontWeight.w400,
@@ -127,8 +186,42 @@ class UserLogin extends StatelessWidget {
                       ),
                     ),
                     Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Obx(() => Checkbox(
+                              value: Get.find<AuthControler>()
+                                  .isAcceptPrivacy
+                                  .value,
+                              onChanged: (value) {
+                                Get.find<AuthControler>()
+                                    .setAcceptPrivacy(isAccept: value!);
+                              })),
+                          const Text(
+                            'I accept the',
+                            style: TextStyle(
+                                color: Colors.black45,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Get.toNamed('/privacy');
+                            },
+                            child: const Text(
+                              ' policy and privacy',
+                              style: TextStyle(
+                                  color: theamColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
                       padding:
-                          const EdgeInsets.only(left: 16, right: 16, top: 210),
+                          const EdgeInsets.only(left: 16, right: 16, top: 18),
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               primary: theamColor,
@@ -145,15 +238,15 @@ class UserLogin extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          'If you have no an account?',
+                          'Already have an account?',
                           style: TextStyle(color: Colors.black45),
                         ),
                         TextButton(
                             onPressed: () {
-                              Get.offNamed(kRegister);
+                              Get.toNamed('/login');
                             },
                             child: const Text(
-                              ' Sign Up',
+                              'Sign In',
                               style: TextStyle(color: theamColor),
                             ))
                       ],
