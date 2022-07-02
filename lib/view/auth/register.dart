@@ -7,6 +7,8 @@ class SignUp extends StatelessWidget {
   SignUp({Key? key}) : super(key: key);
 
   final TextEditingController _walletController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +92,9 @@ class SignUp extends StatelessWidget {
                               suffixIcon: TextButton(
                                 child: Text('Coppy'),
                                 onPressed: () {
-                                  Get.find<AuthControler>().setIsShowPassword();
+                                  print(Get.find<AuthControler>()
+                                      .ethAdddress
+                                      .value);
                                 },
                               ),
                               prefixIcon: Icon(Icons.currency_bitcoin_rounded),
@@ -121,7 +125,7 @@ class SignUp extends StatelessWidget {
                           Obx(() => TextField(
                                 style: const TextStyle(
                                     color: Colors.black, fontSize: 16),
-                                // controller: _addressController,
+                                controller: _passwordController,
                                 obscureText: !Get.find<AuthControler>()
                                     .isShowPassword
                                     .value,
@@ -168,13 +172,14 @@ class SignUp extends StatelessWidget {
                             ),
                           ),
                           TextField(
+                            controller: _emailController,
                             style: const TextStyle(
                                 color: Colors.black, fontSize: 16),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              hintText: 'xxxxxxxx',
+                              hintText: 'johon@mail.com',
                               prefixIcon: const Icon(Icons.email_rounded),
                               hintStyle: const TextStyle(
                                   color: Colors.grey,
@@ -228,7 +233,16 @@ class SignUp extends StatelessWidget {
                               minimumSize: const Size(
                                   0, 48) // put the width and height you want
                               ),
-                          onPressed: () {},
+                          onPressed: () {
+                            String walletAddress = _walletController.text;
+                            String password = _passwordController.text;
+                            String email = _emailController.text;
+
+                            Get.find<AuthControler>().userRegister(
+                                walletAddress: walletAddress,
+                                password: password,
+                                email: email);
+                          },
                           child: const Text(
                             'Done',
                             style: TextStyle(fontSize: 16),
